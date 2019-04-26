@@ -1,4 +1,4 @@
-# caml-mimic
+# caml-mimic - but with HAN Lol
 
 Code for the paper [Explainable Prediction of Medical Codes from Clinical Text](https://arxiv.org/abs/1802.05695).
 
