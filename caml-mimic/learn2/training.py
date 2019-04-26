@@ -260,8 +260,13 @@ def test(model, Y, epoch, data_path, fold, gpu, version, code_inds, dicts, sampl
         get_attn = samples and (np.random.rand() < 0.02 or (fold == 'test' and testing))
         output, loss, alpha = model(data, target, desc_data=desc_data, get_attention=get_attn)
 
-        output = F.sigmoid(output)
+        #import pdb;pdb.set_trace()
         output = output.data.cpu().numpy()
+        #output_norm = output / np.linalg.norm(output)
+        output_sig = 1. / (1. + np.exp(-1.*output))
+
+        #output = F.sigmoid(output)
+        #output = output.data.cpu().numpy()
         losses.append(loss.data)
         target_data = target.data.cpu().numpy()
         if get_attn and samples:
@@ -284,6 +289,7 @@ def test(model, Y, epoch, data_path, fold, gpu, version, code_inds, dicts, sampl
     yhat_raw = np.concatenate(yhat_raw, axis=0)
 
     #write the predictions
+    import pdb;pdb.set_trace()
     preds_file = persistence.write_preds(yhat, model_dir, hids, fold, ind2c, yhat_raw)
     #get metrics
     k = 5 if num_labels == 50 else [8,15]
