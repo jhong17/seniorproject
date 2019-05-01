@@ -180,6 +180,7 @@ class ConvAttnPool(BaseModel):
         self.final.weight.data = torch.Tensor(weights).clone()
         
     def forward(self, x, target, desc_data=None, get_attention=True):
+        #import pdb; pdb.set_trace()
         #get embeddings and apply dropout
         x = self.embed(x)
         x = self.embed_drop(x)
@@ -400,11 +401,13 @@ class AttentionWordRNN(nn.Module):
         self.lookup = nn.Embedding(num_tokens, embed_size)
         if bidirectional == True:
             self.word_gru = nn.GRU(embed_size, word_gru_hidden, bidirectional= True)
+            #self.word_gru = nn.LSTM(embed_size, word_gru_hidden, bidirectional= True)
             self.weight_W_word = nn.Parameter(torch.Tensor(2* word_gru_hidden,2*word_gru_hidden))
             self.bias_word = nn.Parameter(torch.Tensor(2* word_gru_hidden,1))
             self.weight_proj_word = nn.Parameter(torch.Tensor(2*word_gru_hidden, 1))
         else:
             self.word_gru = nn.GRU(embed_size, word_gru_hidden, bidirectional= False)
+            #self.word_gru = nn.LSTM(embed_size, word_gru_hidden, bidirectional= False)
             self.weight_W_word = nn.Parameter(torch.Tensor(word_gru_hidden, word_gru_hidden))
             self.bias_word = nn.Parameter(torch.Tensor(word_gru_hidden,1))
             self.weight_proj_word = nn.Parameter(torch.Tensor(word_gru_hidden, 1))
@@ -424,8 +427,8 @@ class AttentionWordRNN(nn.Module):
         word_squish = batch_matmul_bias(output_word, self.weight_W_word,self.bias_word, nonlinearity='tanh')
         word_attn = batch_matmul(word_squish, self.weight_proj_word)
         word_attn_norm = self.softmax_word(word_attn.transpose(1,0))
-        #word_attn_vectors = attention_mul(output_word, word_attn_norm.transpose(1,0))        
-        word_attn_vectors = attention_mul(output_word, word_attn)        
+        word_attn_vectors = attention_mul(output_word, word_attn_norm.transpose(1,0))        
+        #word_attn_vectors = attention_mul(output_word, word_attn)        
         return word_attn_vectors.unsqueeze(0), state_word, word_attn_norm
     
     def init_hidden(self):
@@ -453,12 +456,14 @@ class AttentionSentRNN(nn.Module):
         
         if bidirectional == True:
             self.sent_gru = nn.GRU(2 * word_gru_hidden, sent_gru_hidden, bidirectional= True)        
+            #self.sent_gru = nn.LSTM(2 * word_gru_hidden, sent_gru_hidden, bidirectional= True)        
             self.weight_W_sent = nn.Parameter(torch.Tensor(2* sent_gru_hidden ,2* sent_gru_hidden))
             self.bias_sent = nn.Parameter(torch.Tensor(2* sent_gru_hidden,1))
             self.weight_proj_sent = nn.Parameter(torch.Tensor(2* sent_gru_hidden, 1))
             self.final_linear = nn.Linear(2* sent_gru_hidden, n_classes)
         else:
             self.sent_gru = nn.GRU(word_gru_hidden, sent_gru_hidden, bidirectional= False)        
+            #self.sent_gru = nn.LSTM(word_gru_hidden, sent_gru_hidden, bidirectional= False)        
             self.weight_W_sent = nn.Parameter(torch.Tensor(sent_gru_hidden ,sent_gru_hidden))
             self.bias_sent = nn.Parameter(torch.Tensor(sent_gru_hidden,1))
             self.weight_proj_sent = nn.Parameter(torch.Tensor(sent_gru_hidden, 1))
@@ -475,8 +480,8 @@ class AttentionSentRNN(nn.Module):
         sent_squish = batch_matmul_bias(output_sent, self.weight_W_sent,self.bias_sent, nonlinearity='tanh')
         sent_attn = batch_matmul(sent_squish, self.weight_proj_sent)
         sent_attn_norm = self.softmax_sent(sent_attn.transpose(1,0))
-        #sent_attn_vectors = attention_mul(output_sent, sent_attn_norm.transpose(1,0))        
-        sent_attn_vectors = attention_mul(output_sent, sent_attn)        
+        sent_attn_vectors = attention_mul(output_sent, sent_attn_norm.transpose(1,0))        
+        #sent_attn_vectors = attention_mul(output_sent, sent_attn)        
         # final classifier
         final_map = self.final_linear(sent_attn_vectors.squeeze(0))
         #return F.log_softmax(final_map), state_sent, sent_attn_norm
