@@ -18,7 +18,7 @@ CAML code is from from Mullenbach et al., which can be found at [https://github.
 * nltk 3.2.4
 
 ## Running the model
-Both commands should be run from inside the learn2 folder. \\
+Both commands should be run from inside the learn2 folder.
 To train the Hierarchical Attention model from scratch on the 50 most frequent labels, run the following command:
 ```
 python training.py ../mimicdata/mimic3/train_50.csv ../mimicdata/mimic3/vocab.csv 50 han 100 --dropout 0.2 --patience 10 --lr 0.0001 --batch-size 16 --gpu
