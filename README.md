@@ -16,4 +16,15 @@ CAML code from Mullenbach et al., which can be found at [https://github.com/jame
 * gensim 3.2.0
 * nltk 3.2.4
 
+## Running the model
+Both commands should be run from inside the learn2 folder.
+To train the Hierarchical Attention model from scratch, run the following command:
+```
+python training.py ../mimicdata/mimic3/train_50.csv ../mimicdata/mimic3/vocab.csv 50 han 100 --dropout 0.2 --patience 10 --lr 0.0001 --batch-size 16 --gpu
+```
+Otherwise, to replicate the results of the data in the final report, run the following:
+```
+python training.py ../mimicdata/mimic3/train_50.csv ../mimicdata/mimic3/vocab.csv 50 han 50 --dropout 0.2 --patience 10 --lr 0.0001 --batch-size 16 --gpu --test-model model_best_f1_micro.pth
+```
+
 
