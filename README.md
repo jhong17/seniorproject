@@ -4,7 +4,7 @@ This code is for CPSC 490: Senior Project, as part of the graduation requirement
 
 This includes code for the paper [Explainable Prediction of Medical Codes from Clinical Text](https://arxiv.org/abs/1802.05695) as well as for [Hierarchical Attention Networks for Document Classification](https://www.aclweb.org/anthology/N16-1174)
 
-CAML code from Mullenbach et al., which can be found at [https://github.com/jamesmullenbach/caml-mimic](https://github.com/jamesmullenbach/caml-mimic) 
+CAML code is from from Mullenbach et al., which can be found at [https://github.com/jamesmullenbach/caml-mimic](https://github.com/jamesmullenbach/caml-mimic) 
 
 
 ## Dependencies
